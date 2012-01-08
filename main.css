@@ -1,0 +1,50 @@
+/* Copyright (c) 2012 by Charles Engelke. */
+
+#settings, #application {
+   display: none;
+}
+
+header {
+   font-family: Verdana, Arial, Helvetica, "sans-serif";
+   font-weight: bold;
+   font-size: 36px;
+   margin-bottom: 20px;
+}
+
+header img {
+   vertical-align: middle;
+}
+
+label {
+   font-family: Verdana, Arial, Helvetica, "sans-serif";
+   font-size: 16px;
+   display: inline-block;
+   width: 250px;
+   text-align: right;
+}
+
+#settings input {
+   display: inline-block;
+   width: 300px;
+}
+
+#settings p {
+   font-family: Verdana, Arial, Helvetica, "sans-serif";
+   font-size: 14px;
+   font-weight: bold;
+   margin-bottom: 10px;
+}
+
+#settings button {
+   display: inline-block;
+   margin-top: 20px;
+}
+
+footer {
+   font-family: Verdana, Arial, Helvetica, "sans-serif";
+   font-size: 9px;
+   font-style: italic;
+   text-align: center;
+   margin-top: 100px;
+}
+

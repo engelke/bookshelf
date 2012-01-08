@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8" />
+   <title>Books to Buy</title>
+   <link rel="stylesheet" type="text/css" href="main.css" />
+   <script src="jquery.js"></script>
+   <script src="sjcl.js"></script>
+   <script src="aws.js"></script>
+   <script src="main.js"></script>
+</head>
+<body>
+   <header><img src="icon_128.png" />Books to Buy Later</header>
+   <div id="settings">
+      <p>
+         This application uses Amazon Web Services, and requires
+         AWS credentials to operate. Please enter your AWS
+         credentials below.
+      </p>
+      <p>
+         You can get an AWS account for free 
+         <a href="https://aws-portal.amazon.com/gp/aws/developer/registration/index.html">here</a>.
+      </p>
+      <div>
+         <label for="accesskeyid">AWS Access Key ID:</label>
+         <input type="text" id="accesskeyid" />
+      </div>
+      <div>
+         <label for="secretaccesskey">AWS Secret Access Key:</label>
+         <input type="text" id="secretaccesskey" />
+      </div>
+      <label />
+      <button id="savesettings">Save Settings</button>
+   </div>
+   <div id="application">
+      <div id="dataentry">
+         <label for="isbn">ISBN or ASIN to add</label>
+         <input type="text" id="isbn" />
+         <button id="lookup">Look Up!</button>
+      </div>
+      <div id="results">
+         <ul id="booklist">
+         </ul>
+      </div>
+   </div>
+   <footer>
+      Copyright &copy; 2012 by <a href="http://engelke.com/" target="_blank">Charles Engelke</a>.
+      Application and license information available at 
+      <a href="http://www.bibliote.ch/" target="_blank">www.bibliote.ch</a>.
+   </footer>
+</body>
+</html> 
+
