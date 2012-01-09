@@ -11,8 +11,8 @@ var AWS = function(accessKeyId, secretAccessKey, associateTag){
       params.push({name: "Operation", value: "ItemLookup"});
       params.push({name: "Timestamp", value: formattedTimestamp()});
       params.push({name: "ItemId", value: itemId});
-      //params.push({name: "IdType", value: "ISBN"});
-      //params.push({name: "SearchIndex", value: "Books"});
+      params.push({name: "IdType", value: "ISBN"});
+      params.push({name: "SearchIndex", value: "Books"});
       params.push({name: "ResponseGroup", value: "ItemAttributes,Offers"});
 
       var signature = computeSignature(params, secretAccessKey);
@@ -30,21 +30,42 @@ var AWS = function(accessKeyId, secretAccessKey, associateTag){
       });
 
       function extractAndReturnResult(data, status, xhr){
-         var result = {
-            asin:          $(data).find("Items Item ASIN")[0].textContent,
-            author:        $(data).find("Items Item ItemAttributes Author")[0].textContent,
-            title:         $(data).find("Items Item ItemAttributes Title")[0].textContent,
-            releaseDate:   $(data).find("Items Item ItemAttributes PublicationDate")[0].textContent,
-            listPrice:     $(data).find("Items Item ItemAttributes ListPrice FormattedPrice")[0].textContent,
-            availability:  $(data).find("Items Item Offers Offer OfferListing Availability")[0].textContent,
-            amazonPrice:   $(data).find("Items Item Offers Offer OfferListing Price FormattedPrice")[0].textContent,
-            url:           $(data).find("Items Item DetailPageURL")[0].textContent
-         };
-         onSuccess(result);
+         var results = [];
+         var result, i, item;
+
+         var items = $(data).find("Items Item");
+         if (items === null) {
+            onError('Amazon returned a result in an unsupported format');
+         } else {
+            for(i=0; i<items.length; i++){
+               item = items[i];
+               result = {
+                  asin:          getValueFrom(item, "ASIN"),
+                  author:        getValueFrom(item, "ItemAttributes Author"),
+                  title:         getValueFrom(item, "ItemAttributes Title"),
+                  releaseDate:   getValueFrom(item, "ItemAttributes PublicationDate"),
+                  listPrice:     getValueFrom(item, "ItemAttributes ListPrice FormattedPrice"),
+                  availability:  getValueFrom(item, "Offers Offer OfferListing Availability"),
+                  amazonPrice:   getValueFrom(item, "Offers Offer OfferListing Price FormattedPrice"),
+                  url:           getValueFrom(item, "DetailPageURL")
+               };
+               results.push(result);
+            }
+         }
+         onSuccess(results);
       }
 
       function returnErrorMessage(xhr, status, error){
          onError('Ajax request failed with status message '+status);
+      }
+   }
+
+   function getValueFrom(item, selector){
+      var elements = $(item).find(selector);
+      if ((elements !== null) && (elements.length > 0)) {
+         return elements[0].textContent;
+      } else {
+         return "N/A";
       }
    }
 

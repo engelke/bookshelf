@@ -62,15 +62,19 @@ $(document).ready(function(){
    }
 
    function saveSettings(){
-      localStorage.accessKeyId = $("#accesskeyid").attr("value");
-      localStorage.secretAccessKey = $("#secretaccesskey").attr("value");
+      localStorage.accessKeyId = trimSpaces($("#accesskeyid").attr("value"));
+      localStorage.secretAccessKey = trimSpaces($("#secretaccesskey").attr("value"));
 
       $("#settings").hide();
       showApplication();
    }
 
+   function trimSpaces(s){
+      return s.replace(/^\s*/, '').replace(/\s*$/, '');
+   }
+
    function lookupIsbn(){
-      var isbn = $("#isbn").attr("value");
+      var isbn = $("#isbn").attr("value").replace(/[^a-zA-Z0-9]/, '');
       aws.itemLookup(isbn,
                      saveResponse, 
                      function(message){
@@ -78,8 +82,10 @@ $(document).ready(function(){
                      }
                      );
 
-      function saveResponse(response){
-         localStorage.setItem("asin_"+response.asin, JSON.stringify(response));
+      function saveResponse(responses){
+         responses.forEach(function(response){
+            localStorage.setItem("asin_"+response.asin, JSON.stringify(response));
+         });
          displayBookList();
       }
    }
