@@ -41,15 +41,17 @@ var AWS = function(accessKeyId, secretAccessKey, associateTag){
                item = items[i];
                result = {
                   asin:          getValueFrom(item, "ASIN"),
-                  author:        getValueFrom(item, "ItemAttributes Author"),
-                  title:         getValueFrom(item, "ItemAttributes Title"),
+                  author:        getValueFrom(item, "ItemAttributes Author") || 'Anonymous',
+                  title:         getValueFrom(item, "ItemAttributes Title") || 'Untitled',
                   releaseDate:   getValueFrom(item, "ItemAttributes PublicationDate"),
-                  listPrice:     getValueFrom(item, "ItemAttributes ListPrice FormattedPrice"),
-                  availability:  getValueFrom(item, "Offers Offer OfferListing Availability"),
-                  amazonPrice:   getValueFrom(item, "Offers Offer OfferListing Price FormattedPrice"),
-                  url:           getValueFrom(item, "DetailPageURL")
+                  listPrice:     getValueFrom(item, "ItemAttributes ListPrice FormattedPrice") || 'an unknown price',
+                  availability:  getValueFrom(item, "Offers Offer OfferListing Availability") || 'Availability unknown',
+                  amazonPrice:   getValueFrom(item, "Offers Offer OfferListing Price FormattedPrice") || 'missing price',
+                  url:           getValueFrom(item, "DetailPageURL") || ''
                };
-               results.push(result);
+               if (result.asin){
+                  results.push(result);
+               }
             }
          }
          onSuccess(results);
@@ -65,7 +67,7 @@ var AWS = function(accessKeyId, secretAccessKey, associateTag){
       if ((elements !== null) && (elements.length > 0)) {
          return elements[0].textContent;
       } else {
-         return "N/A";
+         return null;
       }
    }
 
