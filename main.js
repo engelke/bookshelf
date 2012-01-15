@@ -20,22 +20,29 @@ $(document).ready(function(){
       aws = new AWS(localStorage.accessKeyId, localStorage.secretAccessKey, "engelkecom-20");
       $("#application").show();
       displayBookList();
+      updateBookList();
    }
 
-   function displayBookList(){
+   function getBookList(){
       var books = [];
-      var i, key;
-
-      $("#results li").remove();
 
       for(i=0; i<localStorage.length; i++) {
          key = localStorage.key(i);
          if (key.substr(0,5)=="asin_") {
-            books.push(JSON.parse(localStorage.getItem(key)));
+            book = JSON.parse(localStorage.getItem(key));
+            book.updatedAt = book.updatedAt || '0000-00-00T00:00:00Z';
+            books.push(book);
          }
       }
 
-      books.sort(byReleaseDate).forEach(function(book){
+      return books;
+   }
+
+   function displayBookList(){
+      var books = getBookList().sort(byReleaseDate);
+
+      $("#results li").remove();
+      books.forEach(function(book){
          insertBook(book);
       });
 
@@ -61,6 +68,30 @@ $(document).ready(function(){
       }
    }
 
+   function updateBookList(){
+      var books = getBookList().sort(byUpdatedAt);
+      var asins = [];
+
+      for(var i=0; i<9; i++) {
+         if (books.length > 0) {
+            book = books.shift();
+            asins.push(book.asin);
+         }
+      }
+
+      lookupItems(asins);
+
+      function byUpdatedAt(a, b){
+         if (a.updatedAt < b.updatedAt) {
+            return -1;
+         };
+         if (a.updatedAt > b.updatedAt) {
+            return 1;
+         };
+         return 0;
+      }
+   }
+
    function saveSettings(){
       localStorage.accessKeyId = trimSpaces($("#accesskeyid").attr("value"));
       localStorage.secretAccessKey = trimSpaces($("#secretaccesskey").attr("value"));
@@ -75,6 +106,13 @@ $(document).ready(function(){
 
    function lookupIsbn(){
       var isbn = $("#isbn").attr("value").replace(/[^a-zA-Z0-9]/, '');
+
+      lookupItems([isbn]);
+   }
+
+   function lookupItems(isbns){
+      var isbn = isbns.join(',');
+
       aws.itemLookup(isbn,
                      saveResponse, 
                      function(message){
@@ -86,7 +124,7 @@ $(document).ready(function(){
          responses.forEach(function(response){
             localStorage.setItem("asin_"+response.asin, JSON.stringify(response));
          });
-         displayBookList();
+         displayBookList(getBookList());
       }
    }
 });

@@ -3,15 +3,17 @@
 var AWS = function(accessKeyId, secretAccessKey, associateTag){
    var self = this;
 
-   self.itemLookup = function(itemId, onSuccess, onError){
+   self.itemLookup = function(itemId, onSuccess, onError, idType){
       var params = [];
+      idType = idType || "ISBN";
+
       params.push({name: "Service", value: "AWSECommerceService"});
       params.push({name: "AWSAccessKeyId", value: accessKeyId});
       params.push({name: "AssociateTag", value: associateTag});
       params.push({name: "Operation", value: "ItemLookup"});
       params.push({name: "Timestamp", value: formattedTimestamp()});
       params.push({name: "ItemId", value: itemId});
-      params.push({name: "IdType", value: "ISBN"});
+      params.push({name: "IdType", value: idType});
       params.push({name: "SearchIndex", value: "Books"});
       params.push({name: "ResponseGroup", value: "ItemAttributes,Offers"});
 
@@ -41,6 +43,8 @@ var AWS = function(accessKeyId, secretAccessKey, associateTag){
                item = items[i];
                result = {
                   asin:          getValueFrom(item, "ASIN"),
+                  isbn:          getValueFrom(item, "ISBN"),
+                  ean:           getValueFrom(item, "EAN"),
                   author:        getValueFrom(item, "ItemAttributes Author") || 'Anonymous',
                   title:         getValueFrom(item, "ItemAttributes Title") || 'Untitled',
                   releaseDate:   getValueFrom(item, "ItemAttributes PublicationDate"),
